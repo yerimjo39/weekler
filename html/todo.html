@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekler - TODO</title>
+</head>
+
+<body>
+
+    <header>
+        <button>MON</button>
+        <button>WEEK</button>
+        <button>TODO</button>
+    </header>
+
+
+    <main>
+        <section>
+            <article>
+                <div>
+                    <h3>학교</h3>
+                    <button>+</button>
+                    <button>⋮</button>
+                     <div class="delete-schedule">
+                        <button>카테고리 삭제</button>
+                        <button>일정 편집</button>
+                     </div>
+                </div>
+
+                <div>
+                    <ul>
+                        <li>
+                            <input type="checkbox">
+                            <span>수강신청</span>
+                            <span>8/11 10:00</span>
+                        </li>
+                    </ul>
+                </div>
+            </article>
+
+            <article>
+                <span>카테고리 추가</span>
+                <button>+</button>
+            </article>
+
+        <section class="schedule-modal">
+            <div>
+                <input type="text" placeholder="제목">
+            </div>
+
+            <div>
+                <input type="time">
+                <span>(24h)</span>
+            </div>
+         </section>
+
+         <section class="categoryname-modal">
+            <div>
+                <h3>카테고리 이름을 정해주세요</h3>
+            </div>
+
+            <div>
+                <input type="text" placeholder="카테고리 이름">
+            </div>
+         </section>
+
+         <section class="categorydelete-modal">
+            <div>
+                <h3>카테고리를 삭제하시겠습니까?</h3>
+                <button>네</button>
+                <button>아니오</button>
+            </div>
+         </section>
+
+         <section class="edit-toolbar">
+            <button class="delete-button"></button>
+            <button class="complete-button"></button>
+        </section>
+    </main>
+</body>
+</html>
