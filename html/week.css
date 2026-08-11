@@ -1,0 +1,278 @@
+/*폰트*/
+
+@font-face {
+    font-family: "Cafe24Ohsquare";
+    src: url("./fonts/Cafe24Ohsquare-v2.0.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Cafe24OhsquareAir";
+    src: url("./fonts/Cafe24OhsquareAir-v2.0.woff2") format("woff2");
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Cafe24Ohsquare", sans-serif;
+    color: #222;
+    background-color: #fff;
+}
+
+/* 헤더 버튼 */
+
+header {
+    height: 100px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 50px;
+}
+
+header button {
+    width: 269px;
+    height: 100px;
+
+    border: none;
+    border-radius: 0 0 20px 20px;
+
+    font-family: inherit;
+    font-size: 33px; 
+
+    cursor: pointer;
+    position: relative;
+}
+
+header .mon {
+    background-color: #b8e9ff;
+}
+
+header .week {
+    background-color: #feefc5;
+}
+
+header .todo {
+    background-color: #ccd2f0;
+}
+
+header button + button {
+    margin-left: -119px;
+}
+
+header button.active {
+    z-index: 10;
+}
+
+
+/*주차 표시*/
+
+#week-header {
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    padding-left: 880px;
+    margin-top: -65px;
+
+    gap: 40px;
+}
+
+#week-header h2 {
+    margin: 0;
+    font-size: 48px;
+}
+
+#week-header button {
+    width: 45px;
+    height: 45px;
+
+    border: none;
+    background: none;
+
+    font-family: inherit;
+    font-size: 45px;
+
+    cursor: pointer;
+}
+
+/*날짜*/
+
+#calendar article > div:first-child {
+    height: 45px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-bottom: 1px solid #000000;
+}
+
+#calendar article > div:first-child h3 {
+    margin: 0;
+
+    font-family: "Cafe24OhsquareAir", sans-serif;
+    font-size: 33px;
+    font-weight: normal;
+
+    color: #000000;
+}
+
+/*주간 캘린더*/
+
+#calendar {
+    width: 1796px;
+    height: 915px;
+
+    justify-content: left;
+    margin: 50px;
+    margin-top: 60px;
+
+    display: grid;
+
+    grid-template-columns: repeat(7, 1fr);
+
+    border-top: 1px solid #000000;
+    border-left: 1px solid #000000;
+}
+
+#calendar article {
+    border-right: 1px solid #000000;
+    border-bottom: 1px solid #000000;
+}
+
+#calendar article > div:nth-child(2) {
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-bottom: 1px solid #000000;
+    
+    margin: 0;
+
+    font-size: 33px;
+}
+
+
+/*일정*/
+
+.schedule-area {
+    margin-top: 30px;
+    min-height: 500px;
+}
+
+.schedule-area ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.schedule-area li {
+    min-height: 45px;
+
+    display: flex;
+    align-items: top;
+
+    position: relative;
+}
+
+.schedule-area input[type="checkbox"] {
+    appearance: none;
+
+    width: 25px;
+    height: 25px;
+
+    border: 2px solid #000000;
+    border-radius: 3px;
+
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.schedule-area input[type="checkbox"]:checked::after {
+    content: "✓";
+
+    position: absolute;
+
+    left: 7px;
+    top: -20px;
+
+    font-size: 35px;
+    font-weight: normal;
+    color: #000000;
+}
+
+.schedule-area li span {
+    flex: 1;
+    font-family: "Cafe24OhsquareAir", sans-serif;
+    font-size: 25px;
+    color: #000000;
+}
+
+.schedule-area li > button {
+    width: 25px;
+    height: 25px;
+
+    padding: 0;
+
+    border: none;
+    background: none;
+
+    font-family: inherit;
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.schedule-area li.completed span {
+    color: #999;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+
+.schedule-area input[type="checkbox"]:checked {
+    border-color: #999;
+}
+
+.schedule-area input[type="checkbox"]:checked::after {
+    content: "✓";
+
+    position: absolute;
+    left: 7px;
+    top: -20px;
+
+    color: #999;
+    font-size: 35px;
+    font-weight: normal;
+}
+
+/*일정 삭제 메뉴*/
+
+.delete-schedule {
+    display: none;
+
+    position: absolute;
+
+    right: -50px;
+
+    padding: 5px;
+
+    background-color: white;
+    border: 1px solid #000000;
+
+    z-index: 10;
+}
+
+.delete-schedule button {
+    border: none;
+    background: none;
+
+    font-family: inherit;
+    font-size: 18px;
+    font-family: "Cafe24OhsquareAir", sans-serif;
+
+    cursor: pointer;
+}

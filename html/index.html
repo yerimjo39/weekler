@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekler - WEEK</title>
+    <link rel="stylesheet" href="week.css">
 </head>
 
 <body>
 <header>
-    <button>MON</button>
-    <button>WEEK</button>
-    <button>TODO</button>
+    <button class="mon">MON</button>
+    <button class="week active">WEEK</button>
+    <button class="todo">TODO</button>
 </header>
 
 <main>
@@ -23,13 +24,36 @@
     <section id="calendar">
         <article>
             <div>
-                <h3>월</h3>
+                <h3>10</h3>
+            </div>
+
+            <div>
+                <h3>MON</h3>
+            </div>
+        
+            <div class="schedule-area">
+                <ul>
+                    <li>
+                        <input type="checkbox">
+                        <span>약속 일정 잡기& 향수 공방 예약하기</span>
+                        <button>⋮</button>
+                        <div class="delete-schedule">
+                            <button>일정 삭제</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </article>
+
+        <article>
+            <div>
+                <h3>11</h3>
             </div>
             
             <div>
-                <h3>8/10</h3>
+                <h3>TUE</h3>
             </div>
-        
+            
             <div class="schedule-area">
                 <ul>
                     <li>
@@ -45,14 +69,15 @@
         </article>
 
         <article>
-            <div>
-                <h3>화</h3>
-            </div>
             
             <div>
-                <h3>8/11</h3>
+                <h3>12</h3>
             </div>
-        
+
+            <div>
+                <h3>WED</h3>
+            </div>
+            
             <div class="schedule-area">
                 <ul>
                     <li>
@@ -67,15 +92,15 @@
             </div>
         </article>
 
-        <article>
+        <article>            
             <div>
-                <h3>수</h3>
-            </div>
-            
-            <div>
-                <h3>8/12</h3>
+                <h3>13</h3>
             </div>
         
+            <div>
+                <h3>THU</h3>
+            </div>
+
             <div class="schedule-area">
                 <ul>
                     <li>
@@ -90,15 +115,15 @@
             </div>
         </article>
 
-        <article>
+        <article>            
             <div>
-                <h3>목</h3>
-            </div>
-            
-            <div>
-                <h3>8/13</h3>
+                <h3>14</h3>
             </div>
         
+            <div>
+                <h3>FRI</h3>
+            </div>
+
             <div class="schedule-area">
                 <ul>
                     <li>
@@ -113,15 +138,15 @@
             </div>
         </article>
 
-        <article>
+        <article>            
             <div>
-                <h3>금</h3>
-            </div>
-            
-            <div>
-                <h3>8/14</h3>
+                <h3>15</h3>
             </div>
         
+            <div>
+                <h3>SAT</h3>
+            </div>
+
             <div class="schedule-area">
                 <ul>
                     <li>
@@ -136,38 +161,15 @@
             </div>
         </article>
 
-        <article>
+        <article>            
             <div>
-                <h3>토</h3>
-            </div>
-            
-            <div>
-                <h3>8/15</h3>
+                <h3>16</h3>
             </div>
         
-            <div class="schedule-area">
-                <ul>
-                    <li>
-                        <input type="checkbox">
-                        <span>일정</span>
-                        <button>⋮</button>
-                        <div class="delete-schedule">
-                            <button>일정 삭제</button>
-                        </div>
-                    </li>
-                </ul>
+            <div>
+                <h3>SUN</h3>
             </div>
-        </article>
 
-        <article>
-            <div>
-                <h3>일</h3>
-            </div>
-            
-            <div>
-                <h3>8/16</h3>
-            </div>
-        
             <div class="schedule-area">
                 <ul>
                     <li>
@@ -183,6 +185,8 @@
         </article>
     </section>
 </main>
+
+<script src="script.js"></script>
 
 </body>
 
