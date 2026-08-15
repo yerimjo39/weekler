@@ -10,6 +10,8 @@
     src: url("./fonts/Cafe24OhsquareAir-v2.0.woff2") format("woff2");
 }
 
+/*기본 스타일*/
+
 * {
     box-sizing: border-box;
 }
@@ -82,6 +84,8 @@ header button.active {
 #week-header h2 {
     margin: 0;
     font-size: 48px;
+    line-height: 1;
+    transform: translateY(8px);
 }
 
 #week-header button {
@@ -125,7 +129,6 @@ header button.active {
     width: 1796px;
     height: 915px;
 
-    justify-content: left;
     margin: 50px;
     margin-top: 60px;
 
@@ -174,7 +177,6 @@ header button.active {
     min-height: 45px;
 
     display: flex;
-    align-items: top;
 
     position: relative;
 }
@@ -190,19 +192,6 @@ header button.active {
 
     margin-right: 10px;
     cursor: pointer;
-}
-
-.schedule-area input[type="checkbox"]:checked::after {
-    content: "✓";
-
-    position: absolute;
-
-    left: 7px;
-    top: -20px;
-
-    font-size: 35px;
-    font-weight: normal;
-    color: #000000;
 }
 
 .schedule-area li span {
@@ -252,8 +241,6 @@ header button.active {
 /*일정 삭제 메뉴*/
 
 .delete-schedule {
-    display: none;
-
     position: absolute;
 
     right: -50px;

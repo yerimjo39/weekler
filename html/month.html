@@ -5,34 +5,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekler - MONTH</title>
+    <link rel="stylesheet" href="month.css">
 </head>
 
 <body>
 
 <header>
-    <button>MON</button>
-    <button>WEEK</button>
-    <button>TODO</button>
+    <button class="mon active">MON</button>
+    <button class="week">WEEK</button>
+    <button class="todo next">TODO</button>
 </header>
 
 <main>
+    <div class="calendar-wrapper">
+        <div class="header">
+            <section id="year-header">
 
-    <section>
+                <div class="year">
+                <h2>2026</h2>  
+                </div>
 
-        <button>&lt;</button>
+            </section>
 
-        <div class="year">
-          <h2>2026</h2>  
+            <section id="month-header">
+
+                <button>&lt;</button>
+
+                <div class="month">
+                <h2>8</h2>
+                </div>
+
+                <button>&gt;</button>
+
+            </section>
         </div>
-
-       <div class="month">
-          <h2>8</h2>
+        <div class="box1-2">
+            <section id="image">
+                <img src="images/the_iop-coast-9549731.png">
+            </section>
         </div>
-
-        <button>&gt;</button>
-
-    </section>
-
+    </div>
+    
     <section id="calendar">
 
         <table>
@@ -51,76 +64,79 @@
 
             <tbody>
                 <tr>
-                    <td>26</td>
-                    <td>27</td>
-                    <td>28</td>
-                    <td>29</td>
-                    <td>30</td>
-                    <td>31</td>
-                    <td>1</td>
+                    <td><span class="date">26</span></td>
+                    <td><span class="date">27</span></td>
+                    <td><span class="date">28</span></td>
+                    <td><span class="date">29</span></td>
+                    <td><span class="date">30</span></td>
+                    <td><span class="date">31</span></td>
+                    <td><span class="date">1</span></td>
                 </tr>
 
                 <tr>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
-                    <td>6</td>
-                    <td>7</td>
-                    <td>8</td>
+                    <td><span class="date">2</span></td>
+                    <td><span class="date">3</span></td>
+                    <td><span class="date">4</span></td>
+                    <td><span class="date">5</span></td>
+                    <td><span class="date">6</span></td>
+                    <td><span class="date">7</span></td>
+                    <td><span class="date">8</span></td>
                 </tr>
 
                 <tr>
-                    <td>9</td>
-                    <td>10</td>
-                    <td>11</td>
-                    <td>12</td>
-                    <td>13</td>
-                    <td>14</td>
-                    <td>15</td>
+                    <td><span class="date">9</span></td>
+                    <td><span class="date">10</span></td>
+                    <td><span class="date">11</span></td>
+                    <td><span class="date">12</span></td>
+                    <td><span class="date">13</span></td>
+                    <td><span class="date">14</span></td>
+                    <td><span class="date">15</span></td>
                 </tr>
 
                 <tr>
-                    <td>16</td>
-                    <td>17</td>
-                    <td>18</td>
-                    <td>19</td>
-                    <td>20</td>
-                    <td>21</td>
-                    <td>22</td> 
+                    <td><span class="date">16</span></td>
+                    <td><span class="date">17</span></td>
+                    <td><span class="date">18</span></td>
+                    <td><span class="date">19</span></td>
+                    <td><span class="date">20</span></td>
+                    <td><span class="date">21</span></  td>
+                    <td><span class="date">22</span></td> 
                 </tr>
 
                 <tr>
-                    <td>23</td>
-                    <td>24</td>
-                    <td>25</td>
-                    <td>26</td>
-                    <td>27</td>
-                    <td>28</td>
-                    <td>29</td>
+                    <td><span class="date">23</span></td>
+                    <td><span class="date">24</span></td>
+                    <td><span class="date">25</span></td>
+                    <td><span class="date">26</span></td>
+                    <td><span class="date">27</span></td>
+                    <td><span class="date">28</span></td>
+                    <td><span class="date">29</span></td>
                 </tr>
 
                 <tr>
-                    <td>30</td>
-                    <td>31</td>
-                    <td>1</td>
-                    <td>2</td>
-                    <td>3</td>
-                    <td>4</td>
-                    <td>5</td>
+                    <td><span class="date">30</span></td>
+                    <td><span class="date">31</span></td>
+                    <td><span class="date">1</span></td>
+                    <td><span class="date">2</span></td>
+                    <td><span class="date">3</span></td>
+                    <td><span class="date">4</span></td>
+                    <td><span class="date">5</span></td>
                 </tr>
             </tbody>
         </table>
     </section>
 
     <section class="schedule-modal">
-        <div>
+        <div class="schedule-button">
+            <button class="save-button">✓</button>
+            <button class="close-button">X</button>
+        </div>
+        <div class="schedule-title">
             <input type="text" placeholder="제목">
         </div>
 
-        <div>
+        <div class="schedule-time">
             <input type="time">
-            <span>(24h)</span>
         </div>
     </section>
 
