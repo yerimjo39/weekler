@@ -1,0 +1,313 @@
+.category-list {
+    display: flex;
+    flex-direction: row;
+    margin-top: 25px;
+    margin-left: 50px;
+    gap: 60px;
+}
+
+/*카테고리 헤더 영역*/
+
+.category1,
+.category2,
+.category3 {
+    width: 320px;
+    height: 610px;
+    border: 1px solid #000000;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    height: 50px;
+    border-bottom: 1px solid #000;
+}
+
+.category-header h3 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+.header-buttons {
+    margin-left: auto;
+    display: flex;
+}
+
+.plus,
+.menu {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/*카테고리 콘텐츠 영역*/
+
+.category-content {
+    margin-top: 10px;
+    margin-left: 10px;
+}
+
+.category-content ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.category-content li {
+    min-height: 45px;
+
+    display: flex;
+
+    position: relative;
+}
+
+.category-content input[type="checkbox"] {
+    appearance: none;
+
+    width: 20px;
+    height: 20px;
+
+    border: 2px solid #000000;
+    border-radius: 3px;
+
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.category-content li span {
+    flex: 1;
+    font-family: "Cafe24OhsquareAir", sans-serif;
+    font-size: 20px;
+    color: #000000;
+}
+
+.date {
+    height: 20px;
+    line-height: 25px;
+    margin-right: 5px;
+
+    font-family: "Cafe24OhsquareAir", sans-serif;
+    font-size: 13px;
+    color: #1187CF;
+}
+
+.category-content li > button {
+    width: 20px;
+    height: 20px;
+
+    padding: 0;
+
+    border: none;
+    background: none;
+
+    font-family: inherit;
+    font-size: 25px;
+
+    cursor: pointer;
+}
+
+.category-content li.completed span {
+    color: #999;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+
+.category-content input[type="checkbox"]:checked {
+    border-color: #999;
+}
+
+.category-content input[type="checkbox"]:checked::after {
+    content: "✓";
+
+    position: absolute;
+    left: 7px;
+    top: -20px;
+
+    color: #999;
+    font-size: 35px;
+    font-weight: normal;
+}
+
+/*더보기 메뉴*/
+
+.schedule-edit {
+    position: absolute;
+    width: 90px;
+    height: 70px;
+    z-index: 10;
+
+    top: 15px;
+    left: 100%;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.schedule-edit button {
+    display: none;
+
+    height: 30px;
+    font-family: inherit;
+    font-size: 13px;
+    font-family: "Cafe24OhsquareAir", sans-serif;
+
+    background-color: white;
+    border: 1px solid #000000;
+
+    cursor: pointer;
+}
+
+/*툴바*/
+
+.edit-toolbar {
+    height: 40px;
+    margin-top: auto;
+    border-top: 1px solid #000000;
+    display: flex;
+}
+
+.delete-button,
+.complete-button {
+    width: 50%;
+    border: none;
+    background: #e5e4e4;
+}
+
+.delete-button {
+    border-right: 1px solid #000;
+}
+
+/*카테고리 추가 영역*/
+
+.categoryplus {
+    width: 320px;
+    height: 50px;
+    border: 1px solid #000000;
+    background-color: #e5e5e5;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.categoryplus h3 {
+    position: absolute;
+    transform: translateX(-100%);
+    margin: 0;
+}
+
+.plusbutton {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+/*카테고리 이름 설정 팝업*/
+
+.categoryname-modal {
+    width: 400px;
+    height: 180px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+
+    background-color: #fff;
+    border: 2px solid #000;
+    position: fixed;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.categoryname-modal h3 {
+    font-family: "Cafe24Ohsquare", sans-serif;
+    font-size: 25px;
+    align-items: center;
+}
+
+.name {
+    width: 300px;
+    height: 40px;
+    margin-top: 10px;
+
+    font-family: "Cafe24Ohsquare", sans-serif;
+    font-size: 40px;
+    text-align: center;
+    color: #000;
+
+    border: none;
+}
+
+.name::placeholder {
+    color: #999;
+}
+
+/*카테고리 삭제 팝업*/
+
+.categorydelete-modal {
+    width: 400px;
+    height: 180px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    display: none;
+
+    background-color: hsl(0, 0%, 100%);
+    border: 2px solid #000;
+    position: fixed;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.categorydelete-modal h3 {
+    font-family: "Cafe24Ohsquare", sans-serif;
+    font-size: 25px;
+    align-items: center;
+}
+
+.categorydelete-buttons {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 30px;
+    gap: 10px;
+}
+
+.yes{
+    width: 50%;
+    height: 50px;
+    border: 4px solid #e4f0d5;
+    background-color: #fff;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 25px;
+}
+
+.no{
+    width: 50%;
+    height: 50px;
+    border: 4px solid #feccbe;
+    background-color: #fff;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 25px;
+}

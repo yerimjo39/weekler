@@ -5,79 +5,149 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekler - TODO</title>
+    <link rel="stylesheet" href="common.css">
+    <link rel="stylesheet" href="common2.css">
+    <link rel="stylesheet" href="todo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 </head>
 
 <body>
 
     <header>
-        <button>MON</button>
-        <button>WEEK</button>
-        <button>TODO</button>
+        <button class="mon next">MON</button>
+        <button class="week">WEEK</button>
+        <button class="todo active">TODO</button>
     </header>
 
 
     <main>
-        <section>
-            <article>
-                <div>
+        <section Class="category-list">
+            <article class="category1">
+                <div class="category-header">
                     <h3>학교</h3>
-                    <button>+</button>
-                    <button>⋮</button>
-                     <div class="delete-schedule">
+                    <div class="header-buttons">
+                        <button class="plus">+</button>
+                        <button class="menu">⋮</button>
+                    </div>
+                     <div class="schedule-edit">
+                        <button>카테고리 삭제</button>
+                        <button>일정 편집</button>
+                     </div>
+                </div> 
+
+                <div class="category-content">
+                    <ul>
+                        <li>
+                            <input type="checkbox">
+                            <span>수강신청</span>
+                        </li>
+                    </ul>
+                </div>
+                <section class="edit-toolbar">
+                    <button class="delete-button">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button class="complete-button">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </section>
+            </article>
+
+            <article class="category2">
+                <div class="category-header">
+                    <h3>학교생활</h3>
+                    <div class="header-buttons">
+                        <button class="plus">+</button>
+                        <button class="menu">⋮</button>
+                    </div>
+                     <div class="schedule-edit">
                         <button>카테고리 삭제</button>
                         <button>일정 편집</button>
                      </div>
                 </div>
 
-                <div>
+                <div class="category-content">
                     <ul>
                         <li>
                             <input type="checkbox">
-                            <span>수강신청</span>
-                            <span>8/11 10:00</span>
+                            <span>등록금 내기</span>
+                            <div class="date">8월 30일</div>
                         </li>
                     </ul>
                 </div>
+                <section class="edit-toolbar">
+                    <button class="delete-button">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button class="complete-button">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </section>
             </article>
 
-            <article>
-                <span>카테고리 추가</span>
-                <button>+</button>
+            <article class="category3">
+                <div class="category-header">
+                    <h3>약속</h3>
+
+                    <div class="header-buttons">
+                        <button class="plus">+</button>
+                        <button class="menu">⋮</button>
+                    </div>
+
+                     <div class="schedule-edit">
+                        <button>카테고리 삭제</button>
+                        <button>일정 편집</button>
+                     </div>
+                </div>
+                <section class="edit-toolbar">
+                    <button class="delete-button">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button class="complete-button">
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </section>
+            </article>  
+
+            <article class="categoryplus">
+                <h3>카테고리 추가</h3>
+                <button class="plusbutton">+</button>
             </article>
+        </section>
 
         <section class="schedule-modal">
-            <div>
+            <div class="schedule-button">
+                <button class="save-button">✓</button>
+                <button class="close-button">X</button>
+            </div>
+            <div class="schedule-title">
                 <input type="text" placeholder="제목">
             </div>
 
-            <div>
+            <div class="schedule-time">
                 <input type="time">
-                <span>(24h)</span>
             </div>
-         </section>
+        </section>
 
-         <section class="categoryname-modal">
+        <section class="categoryname-modal">
             <div>
                 <h3>카테고리 이름을 정해주세요</h3>
             </div>
 
             <div>
-                <input type="text" placeholder="카테고리 이름">
+                <input type="text" class="name" placeholder="카테고리 이름">
             </div>
-         </section>
+        </section>
 
-         <section class="categorydelete-modal">
+        <section class="categorydelete-modal">
             <div>
                 <h3>카테고리를 삭제하시겠습니까?</h3>
-                <button>네</button>
-                <button>아니오</button>
+                <div class="categorydelete-buttons">
+                    <button class="yes">네</button>
+                    <button class="no">아니오</button>
+                </div>
             </div>
          </section>
-
-         <section class="edit-toolbar">
-            <button class="delete-button"></button>
-            <button class="complete-button"></button>
-        </section>
     </main>
 </body>
 </html>

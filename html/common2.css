@@ -1,0 +1,72 @@
+/*일정 추가 팝업*/
+
+.schedule-modal {
+    display: none;
+    
+    width: 400px;
+    height: 280px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #fff;
+    border: 2px solid #000;
+    position: fixed;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.schedule-button {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 40px;
+    margin-right: 20px;
+    margin-top: 10px;
+    gap: 10px;
+}
+
+.close-button,
+.save-button {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #000;
+    border-radius: 50%;
+    background-color: #f5f5f5;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.save-button {
+    font-weight: bold;
+}
+
+.schedule-title {
+    display: flex;
+    align-items: center;
+    position: relative;
+    top: 10px;
+    left: 20px;
+}
+
+.schedule-title input {
+    width: 360px;
+    border: none;
+    font-family: inherit;
+    font-size: 40px;
+}
+
+.schedule-time {
+    display: flex;
+    align-items: center;
+    height: 30px;
+    position: relative;
+    top: 130px;
+    left: 20px;
+}
+
+.schedule-time input {
+    border: none;
+    font-family: inherit;
+    font-size: 25px;
+}

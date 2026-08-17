@@ -1,0 +1,72 @@
+/* 폰트 적용 */
+
+@font-face {
+    font-family: "Cafe24Ohsquare";
+    src: url("./fonts/Cafe24Ohsquare-v2.0.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Cafe24OhsquareAir";
+    src: url("./fonts/Cafe24OhsquareAir-v2.0.woff2") format("woff2");
+}
+
+/* 기본 스타일*/
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Cafe24Ohsquare", sans-serif;
+    color: #222;
+    background-color: #fff;
+}
+
+/* 헤더 버튼 */
+
+header {
+    height: 70px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 50px;
+}
+
+header button {
+    width: 185px;
+    height: 70px;
+
+    border: none;
+    border-radius: 0 0 20px 20px;
+
+    font-family: inherit;
+    font-size: 25px; 
+
+    cursor: pointer;
+    position: relative;
+}
+
+header .mon {
+    background-color: #b8e9ff;
+}
+
+header .week {
+    background-color: #feefc5;
+}
+
+header .todo {
+    background-color: #ccd2f0;
+}
+
+header button + button {
+    margin-left: -95px;
+}
+
+header button.active {
+    z-index: 10;
+}
+
+header button.next {
+    z-index: -5;
+}
