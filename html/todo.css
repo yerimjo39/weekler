@@ -78,6 +78,7 @@
     border-radius: 3px;
 
     margin-right: 10px;
+    position: relative;
     cursor: pointer;
 }
 
@@ -127,8 +128,7 @@
     content: "✓";
 
     position: absolute;
-    left: 7px;
-    top: -20px;
+    top: -25px;
 
     color: #999;
     font-size: 35px;
@@ -138,6 +138,8 @@
 /*더보기 메뉴*/
 
 .schedule-edit {
+    visibility: hidden;
+
     position: absolute;
     width: 90px;
     height: 70px;
@@ -192,6 +194,7 @@
     height: 50px;
     border: 1px solid #000000;
     background-color: #e5e5e5;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -199,6 +202,7 @@
 
 .categoryplus h3 {
     position: absolute;
+    left: 65%;
     transform: translateX(-100%);
     margin: 0;
 }

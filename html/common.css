@@ -68,5 +68,5 @@ header button.active {
 }
 
 header button.next {
-    z-index: -5;
+    z-index: 5;
 }

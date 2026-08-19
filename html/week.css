@@ -94,21 +94,37 @@
 
 .schedule-area {
     margin-top: 10px;
-    min-height: 400px;
+    height: 509px;
+    overflow-y: auto;
+}
+
+.schedule-area::-webkit-scrollbar {
+    width: 6px;
+}
+
+.schedule-area::-webkit-scrollbar-thumb {
+    background-color: #bbb; 
+    border-radius: 3px;
+}
+
+.schedule-area::-webkit-scrollbar-track {
+    background-color: transparent; 
 }
 
 .schedule-area ul {
     margin: 0;
     padding: 0;
+    padding-bottom: 30px;
     list-style: none;
 }
 
 .schedule-area li {
     min-height: 45px;
-
     display: flex;
-
     position: relative;
+}
+.schedule-area li span[contenteditable="true"] {
+    outline: none;
 }
 
 .schedule-area input[type="checkbox"] {
@@ -160,8 +176,8 @@
     content: "✓";
 
     position: absolute;
-    left: 7px;
-    top: -20px;
+    left: 6px;
+    top: -24px;
 
     color: #999;
     font-size: 35px;
@@ -171,6 +187,8 @@
 /*일정 삭제 메뉴*/
 
 .delete-schedule {
+    display: none;
+
     position: absolute;
     right: 0;
     padding: 5px;
@@ -179,6 +197,10 @@
     border: 1px solid #000000;
 
     z-index: 10;
+}
+
+.delete-schedule.show {
+    display: block;
 }
 
 .delete-schedule button {
