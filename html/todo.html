@@ -22,7 +22,7 @@
 
     <main>
         <section class="category-list">
-            <article class="category1">
+            <article class="category">
                 <div class="category-header">
                     <h3>todo</h3>
                     <div class="header-buttons">
@@ -30,18 +30,13 @@
                         <button class="menu">⋮</button>
                     </div>
                      <div class="schedule-edit">
-                        <button>카테고리 삭제</button>
-                        <button>일정 편집</button>
+                        <button data-action="delete-category">카테고리 삭제</button>
+                        <button data-action="edit-schedule">일정 편집</button>
                      </div>
                 </div> 
 
                 <div class="category-content">
-                    <ul>
-                        <li>
-                            <input type="checkbox">
-                            <span>키링 갖다주기</span>
-                        </li>
-                    </ul>
+                    <ul></ul>
                 </div>
                 
                 <section class="edit-toolbar">
@@ -52,70 +47,7 @@
                         <i class="fa-solid fa-check"></i>
                     </button>
                 </section>
-            </article>
-
-            <article class="category2">
-                <div class="category-header">
-                    <h3>학교생활</h3>
-                    <div class="header-buttons">
-                        <button class="plus">+</button>
-                        <button class="menu">⋮</button>
-                    </div>
-                     <div class="schedule-edit">
-                        <button>카테고리 삭제</button>
-                        <button>일정 편집</button>
-                     </div>
-                </div>
-
-                <div class="category-content">
-                    <ul>
-                        <li>
-                            <input type="checkbox">
-                            <span>등록금 내기</span>
-                            <div class="date">8월 30일</div>
-                        </li>
-                    </ul>
-                </div>
-                
-                <section class="edit-toolbar">
-                    <button class="delete-button">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="complete-button">
-                        <i class="fa-solid fa-check"></i>
-                    </button>
-                </section>
-            </article>
-
-            <article class="category3">
-                <div class="category-header">
-                    <h3>약속</h3>
-
-                    <div class="header-buttons">
-                        <button class="plus">+</button>
-                        <button class="menu">⋮</button>
-                    </div>
-
-                     <div class="schedule-edit">
-                        <button>카테고리 삭제</button>
-                        <button>일정 편집</button>
-                     </div>
-                </div>
-                
-                <div class="category-content">
-                    <ul>
-                    </ul>
-                </div>
-
-                <section class="edit-toolbar">
-                    <button class="delete-button">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                    <button class="complete-button">
-                        <i class="fa-solid fa-check"></i>
-                    </button>
-                </section>
-            </article>  
+            </article> 
 
             <article class="categoryplus">
                 <h3>카테고리 추가</h3>

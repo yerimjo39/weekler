@@ -4,13 +4,20 @@
     margin-top: 25px;
     margin-left: 50px;
     gap: 60px;
+
+    flex-wrap: nowrap; 
+    overflow-x: auto;
+    padding-bottom: 8px;
+}
+
+.category, .categoryplus {
+    flex-shrink: 0;
+    width: 300px;  
 }
 
 /*카테고리 헤더 영역*/
 
-.category1,
-.category2,
-.category3 {
+.category {
     width: 320px;
     height: 610px;
     border: 1px solid #000000;
@@ -82,6 +89,16 @@
     cursor: pointer;
 }
 
+.category-content li.selected {
+    background-color: #e2f1f8;
+    border-radius: 4px;
+}
+
+.category-content li span {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
 .category-content li span {
     flex: 1;
     font-family: "Cafe24OhsquareAir", sans-serif;
@@ -137,50 +154,63 @@
 
 /*더보기 메뉴*/
 
+.category-header {
+    position: relative;
+}
+
 .schedule-edit {
-    visibility: hidden;
-
+    display: none; /* 부모 요소를 기본 숨김 처리 */
     position: absolute;
-    width: 90px;
-    height: 70px;
-    z-index: 10;
-
+    z-index: 100;
     top: 15px;
     left: 100%;
-
-    display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
+/* 더보기 버튼을 눌러 .active 클래스가 붙으면 부모를 보여줌 */
+.schedule-edit.active {
+    display: flex !important;
+}
+
 .schedule-edit button {
-    display: none;
-
+    /* display: none;  <-- 이 줄을 삭제하거나 주석 처리해야 버튼이 보입니다. */
+    width: 100px;
     height: 30px;
-    font-family: inherit;
-    font-size: 13px;
+    border: 1px solid #000;
+    background-color: #fff;
     font-family: "Cafe24OhsquareAir", sans-serif;
-
-    background-color: white;
-    border: 1px solid #000000;
-
+    font-size: 15px;
     cursor: pointer;
 }
 
-/*툴바*/
-
+/* 2. 일정 편집 툴바 */
 .edit-toolbar {
+    display: none;             /* 평소에는 숨김 */
+    width: 100%;
     height: 40px;
-    margin-top: auto;
-    border-top: 1px solid #000000;
-    display: flex;
+    margin-top: auto;          /* 카테고리 박스 맨 아래에 밀착 */
+    border-top: 1px solid #000; /* 상단 테두리 추가 */
 }
 
+/* active 클래스가 붙었을 때만 툴바 표시 */
+.edit-toolbar.active {
+    display: flex !important;
+}
+
+/* 내부 버튼 및 아이콘 스타일 복구 */
 .delete-button,
 .complete-button {
+    visibility: visible !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 50%;
+    height: 100%;
     border: none;
     background: #e5e4e4;
+    cursor: pointer;
+    font-size: 18px;
 }
 
 .delete-button {
