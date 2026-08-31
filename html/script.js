@@ -14,17 +14,12 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
-/*1-0. 통합 일정 저장소
-  월간/주간/전체일정목록이 전부 같은 저장소를 함께 씀.
-  일정 하나 = { id, date(또는 null), text, time, completed, category }
-  - date가 있으면 월간/주간 캘린더의 해당 날짜 칸에 표시됨
-  - category는 전체일정목록에서 어느 카테고리에 속하는지 (기본값: '카테고리 없음')
-*/
+/*1-0. 통합 일정 저장소*/
+
 const SCHEDULE_STORAGE_KEY = 'weeklerSchedules';
 const CATEGORY_STORAGE_KEY = 'weeklerCategories';
 const DEFAULT_CATEGORY = '카테고리 없음';
 
-//예전 버전(월간/주간/투두가 각각 따로 저장하던 방식) 데이터를 한 번만 새 저장소로 옮겨줌
 function migrateLegacyStorageIfNeeded() {
     if (localStorage.getItem(SCHEDULE_STORAGE_KEY)) return;
 
@@ -41,7 +36,7 @@ function migrateLegacyStorageIfNeeded() {
                 });
             });
         });
-    } catch (e) { /* 무시 */ }
+    } catch (e) {}
 
     try {
         const monthData = JSON.parse(localStorage.getItem('monthPlans')) || {};
@@ -53,7 +48,7 @@ function migrateLegacyStorageIfNeeded() {
                 });
             });
         });
-    } catch (e) { /* 무시 */ }
+    } catch (e) {}
 
     try {
         const todoData = JSON.parse(localStorage.getItem('todoItems')) || {};
@@ -66,7 +61,7 @@ function migrateLegacyStorageIfNeeded() {
                 });
             });
         });
-    } catch (e) { /* 무시 */ }
+    } catch (e) {}
 
     localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(merged));
     localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
@@ -86,7 +81,7 @@ function saveAllSchedules(list) {
     localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(list));
 }
 
-//새 일정 추가 (id는 자동 생성)
+//새 일정 추가
 function addScheduleItem({ date = null, text = '', time = '', completed = false, category = DEFAULT_CATEGORY }) {
     const all = loadAllSchedules();
     const item = {
@@ -98,7 +93,7 @@ function addScheduleItem({ date = null, text = '', time = '', completed = false,
     return item;
 }
 
-//일정 수정 (없으면 만들어서 추가 - 주간 캘린더에서 빈 칸에 바로 타이핑할 때 사용)
+//일정 수정(없으면 임시로 만들어서)
 function upsertScheduleItem(id, defaults, changes) {
     const all = loadAllSchedules();
     let item = all.find((it) => it.id === id);
@@ -126,17 +121,17 @@ function removeScheduleItem(id) {
     saveAllSchedules(all.filter((it) => it.id !== id));
 }
 
-//해당 날짜의 일정 목록 (월간/주간 캘린더에서 사용)
+//해당 날짜의 일정 목록
 function getItemsByDate(dateKey) {
     return loadAllSchedules().filter((it) => it.date === dateKey);
 }
 
-//해당 카테고리의 일정 목록 (전체일정목록에서 사용)
+//해당 카테고리의 일정 목록
 function getItemsByCategory(categoryKey) {
     return loadAllSchedules().filter((it) => (it.category || DEFAULT_CATEGORY) === categoryKey);
 }
 
-//카테고리 목록 불러오기/저장하기 (항목이 없어도 카테고리 자체는 남아있어야 하므로 따로 저장)
+//카테고리 목록 불러오기/저장하기
 function loadCategories() {
     let categories;
     try {
@@ -160,7 +155,7 @@ function addCategory(categoryKey) {
     }
 }
 
-//카테고리 삭제 (카테고리 없음은 삭제 불가, 안에 있던 일정은 카테고리 없음으로 돌려보냄)
+//카테고리 삭제
 function removeCategory(categoryKey) {
     if (categoryKey === DEFAULT_CATEGORY) return;
 
@@ -206,7 +201,7 @@ function createPlanDiv(item) {
 function createTodoLi(item) {
     const li = document.createElement('li');
     li.dataset.id = item.id;
-    li.draggable = true;
+    li.draggable = true; //드래그할 수 있게
     if (item.completed) li.classList.add('completed');
 
     const dateHtml = item.time ? `<div class="date">${escapeHtml(item.time)}</div>` : '';
@@ -410,7 +405,7 @@ function renderWeekCalendar(baseDate) {
         renderScheduleList(article, dateKey);
     });
 }
-//저장된 일정을 해당 날짜의 목록에 렌더링 (카테고리와 상관없이 그 날짜의 모든 일정 표시)
+//저장된 일정을 해당 날짜의 목록에 렌더링
 function renderScheduleList(article, dateKey) {
     const ul = article.querySelector('.schedule-area ul');
     if (!ul) return;
@@ -434,7 +429,7 @@ function renderTodoList(article, categoryKey) {
         ul.appendChild(createTodoLi(item));
     });
 }
-//화면에 있는 모든 카테고리 목록 다시 그리기 (드래그로 카테고리 이동했을 때 사용)
+//화면에 있는 모든 카테고리 목록 다시 그리기 (드래그로 카테고리 이동)
 function renderAllTodoCategories() {
     document.querySelectorAll('.category-list > article.category').forEach((article) => {
         const categoryKey = article.dataset.category;
@@ -461,7 +456,6 @@ function initTodoPage() {
     });
     saveCategories(categories);
 
-    //카테고리 순서대로 article을 찾거나 새로 만들어서 렌더링
     categories.forEach((categoryKey) => {
         let article = Array.from(categoryList.querySelectorAll(':scope > article')).find((a) => {
             if (a.classList.contains('categoryplus')) return false;
@@ -578,7 +572,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 { completed }
             );
         });
-        //텍스트 입력을 끝냈을 때 빈칸이면 삭제, 텍스트가 있으면 저장
+        //텍스트 입력을 끝냈을 때 빈칸이면 삭제 텍스트가 있으면 저장
         weekCalendar.addEventListener('focusout', function (e) {
             if (!e.target.matches('.schedule-area li span[contenteditable="true"]')) return;
 
@@ -671,7 +665,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (saveBtn) {
-            //일정 저장 (카테고리 없음으로 저장 -> 전체일정목록에도 자동으로 뜸)
+            //일정 저장
             saveBtn.addEventListener('click', () => {
                 const titleText = titleInput ? titleInput.value.trim() : '';
                 if (selectedTd && titleText !== '') {
@@ -694,7 +688,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     plansWrapper.appendChild(createPlanDiv(item));
 
-                    //같은 날짜인 다른 페이지(주간 캘린더)에도 자동 반영되도록 갱신
                     renderWeekCalendar(currentWeekDate);
                 }
 
@@ -793,7 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            //카테고리 삭제 버튼 (카테고리 없음은 삭제 불가)
+            //카테고리 삭제 버튼
             const deleteCategoryBtn = e.target.closest('.schedule-edit button:nth-child(1)');
             if (deleteCategoryBtn) {
                 const article = deleteCategoryBtn.closest('article');
@@ -801,7 +794,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (menuBox) menuBox.classList.remove('active');
 
                 if (article && article.dataset.category === DEFAULT_CATEGORY) {
-                    alert(`'${DEFAULT_CATEGORY}' 카테고리는 삭제할 수 없습니다.`);
+                    alert(`'${DEFAULT_CATEGORY}' 삭제할 수 없습니다.`);
                     return;
                 }
 
@@ -873,6 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         //카테고리 간 일정 드래그 이동
+        //드래그 시작할 때 일정 저장
         categoryList.addEventListener('dragstart', (e) => {
             const li = e.target.closest('.category-content li');
             if (!li || !li.dataset.id) return;
@@ -891,7 +885,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const content = e.target.closest('.category-content');
             if (content) content.classList.remove('drag-over');
         });
-
+        //드롭하면 카테고리 변경
         categoryList.addEventListener('drop', (e) => {
             const content = e.target.closest('.category-content');
             if (!content) return;
@@ -918,7 +912,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         targetCategoryArticle.remove();
                         targetCategoryArticle = null;
 
-                        //해당 카테고리에 있던 일정들이 카테고리 없음으로 돌아왔으니 다시 그림
                         renderAllTodoCategories();
                     }
                     deleteModal.style.display = 'none';
