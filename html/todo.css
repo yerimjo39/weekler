@@ -59,6 +59,23 @@
 .category-content {
     margin-top: 10px;
     margin-left: 10px;
+    margin-right: 10px;
+
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: thin;
+}
+
+.category-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.category-content::-webkit-scrollbar-thumb {
+    background-color: #d9d9d9;
+    border-radius: 2px;
 }
 
 .category-content ul {
@@ -71,8 +88,15 @@
     min-height: 45px;
 
     display: flex;
+    align-items: flex-start;
+    padding: 8px 0;
+    cursor: grab;
 
     position: relative;
+}
+
+.category-content.drag-over {
+    background-color: #e2f1f8;
 }
 
 .category-content input[type="checkbox"] {
@@ -80,11 +104,13 @@
 
     width: 20px;
     height: 20px;
+    flex-shrink: 0;
 
     border: 2px solid #000000;
     border-radius: 3px;
 
     margin-right: 10px;
+    margin-top: 2px;
     position: relative;
     cursor: pointer;
 }
@@ -101,6 +127,11 @@
 
 .category-content li span {
     flex: 1;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
+
     font-family: "Cafe24OhsquareAir", sans-serif;
     font-size: 20px;
     color: #000000;
@@ -110,6 +141,8 @@
     height: 20px;
     line-height: 25px;
     margin-right: 5px;
+    flex-shrink: 0;
+    white-space: nowrap;
 
     font-family: "Cafe24OhsquareAir", sans-serif;
     font-size: 13px;

@@ -14,46 +14,170 @@ function escapeHtml(str) {
     return div.innerHTML;
 }
 
-/*1-1. 주간 캘린더*/
-const SCHEDULE_STORAGE_KEY = 'weekSchedules';
-//저장된 일정 데이터 객체로 꺼내오기
+/*1-0. 통합 일정 저장소
+  월간/주간/전체일정목록이 전부 같은 저장소를 함께 씀.
+  일정 하나 = { id, date(또는 null), text, time, completed, category }
+  - date가 있으면 월간/주간 캘린더의 해당 날짜 칸에 표시됨
+  - category는 전체일정목록에서 어느 카테고리에 속하는지 (기본값: '카테고리 없음')
+*/
+const SCHEDULE_STORAGE_KEY = 'weeklerSchedules';
+const CATEGORY_STORAGE_KEY = 'weeklerCategories';
+const DEFAULT_CATEGORY = '카테고리 없음';
+
+//예전 버전(월간/주간/투두가 각각 따로 저장하던 방식) 데이터를 한 번만 새 저장소로 옮겨줌
+function migrateLegacyStorageIfNeeded() {
+    if (localStorage.getItem(SCHEDULE_STORAGE_KEY)) return;
+
+    const merged = [];
+    const categories = [DEFAULT_CATEGORY];
+
+    try {
+        const weekData = JSON.parse(localStorage.getItem('weekSchedules')) || {};
+        Object.keys(weekData).forEach((dateKey) => {
+            (weekData[dateKey] || []).forEach((it) => {
+                merged.push({
+                    id: it.id, date: dateKey, text: it.text || '', time: '',
+                    completed: !!it.completed, category: DEFAULT_CATEGORY
+                });
+            });
+        });
+    } catch (e) { /* 무시 */ }
+
+    try {
+        const monthData = JSON.parse(localStorage.getItem('monthPlans')) || {};
+        Object.keys(monthData).forEach((dateKey) => {
+            (monthData[dateKey] || []).forEach((it) => {
+                merged.push({
+                    id: it.id, date: dateKey, text: it.text || '', time: '',
+                    completed: false, category: DEFAULT_CATEGORY
+                });
+            });
+        });
+    } catch (e) { /* 무시 */ }
+
+    try {
+        const todoData = JSON.parse(localStorage.getItem('todoItems')) || {};
+        Object.keys(todoData).forEach((categoryKey) => {
+            if (!categories.includes(categoryKey)) categories.push(categoryKey);
+            (todoData[categoryKey] || []).forEach((it) => {
+                merged.push({
+                    id: it.id, date: null, text: it.text || '', time: it.time || '',
+                    completed: !!it.completed, category: categoryKey
+                });
+            });
+        });
+    } catch (e) { /* 무시 */ }
+
+    localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(merged));
+    localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
+}
+migrateLegacyStorageIfNeeded();
+
+//전체 일정 배열 불러오기/저장하기
 function loadAllSchedules() {
     try {
-        return JSON.parse(localStorage.getItem(SCHEDULE_STORAGE_KEY)) || {};
+        return JSON.parse(localStorage.getItem(SCHEDULE_STORAGE_KEY)) || [];
     } catch (e) {
-        return {};
+        return [];
     }
 }
-//객체를 로컬스토리지에 저장
-function saveAllSchedules(data) {
-    localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(data));
-}
-//[주간]수정된 일정 저장
-function upsertSchedule(dateKey, id, changes) {
-    const all = loadAllSchedules();
-    if (!all[dateKey]) all[dateKey] = [];
 
-    let item = all[dateKey].find((it) => it.id === id);
+function saveAllSchedules(list) {
+    localStorage.setItem(SCHEDULE_STORAGE_KEY, JSON.stringify(list));
+}
+
+//새 일정 추가 (id는 자동 생성)
+function addScheduleItem({ date = null, text = '', time = '', completed = false, category = DEFAULT_CATEGORY }) {
+    const all = loadAllSchedules();
+    const item = {
+        id: `s${Date.now()}${Math.random().toString(16).slice(2)}`,
+        date, text, time, completed, category
+    };
+    all.push(item);
+    saveAllSchedules(all);
+    return item;
+}
+
+//일정 수정 (없으면 만들어서 추가 - 주간 캘린더에서 빈 칸에 바로 타이핑할 때 사용)
+function upsertScheduleItem(id, defaults, changes) {
+    const all = loadAllSchedules();
+    let item = all.find((it) => it.id === id);
     if (!item) {
-        item = { id, text: '', completed: false };
-        all[dateKey].push(item);
+        item = Object.assign({ id }, defaults);
+        all.push(item);
     }
     Object.assign(item, changes);
-
     saveAllSchedules(all);
+    return item;
 }
-//일정 삭제
-function removeSchedule(dateKey, id) {
+
+//일정 수정
+function updateScheduleItem(id, changes) {
     const all = loadAllSchedules();
-    if (!all[dateKey]) return;
-
-    all[dateKey] = all[dateKey].filter((it) => it.id !== id);
+    const item = all.find((it) => it.id === id);
+    if (!item) return;
+    Object.assign(item, changes);
     saveAllSchedules(all);
 }
-//일정 데이터로 li 생성
+
+//일정 삭제
+function removeScheduleItem(id) {
+    const all = loadAllSchedules();
+    saveAllSchedules(all.filter((it) => it.id !== id));
+}
+
+//해당 날짜의 일정 목록 (월간/주간 캘린더에서 사용)
+function getItemsByDate(dateKey) {
+    return loadAllSchedules().filter((it) => it.date === dateKey);
+}
+
+//해당 카테고리의 일정 목록 (전체일정목록에서 사용)
+function getItemsByCategory(categoryKey) {
+    return loadAllSchedules().filter((it) => (it.category || DEFAULT_CATEGORY) === categoryKey);
+}
+
+//카테고리 목록 불러오기/저장하기 (항목이 없어도 카테고리 자체는 남아있어야 하므로 따로 저장)
+function loadCategories() {
+    let categories;
+    try {
+        categories = JSON.parse(localStorage.getItem(CATEGORY_STORAGE_KEY)) || [];
+    } catch (e) {
+        categories = [];
+    }
+    if (!categories.includes(DEFAULT_CATEGORY)) categories = [DEFAULT_CATEGORY, ...categories];
+    return categories;
+}
+
+function saveCategories(categories) {
+    localStorage.setItem(CATEGORY_STORAGE_KEY, JSON.stringify(categories));
+}
+
+function addCategory(categoryKey) {
+    const categories = loadCategories();
+    if (!categories.includes(categoryKey)) {
+        categories.push(categoryKey);
+        saveCategories(categories);
+    }
+}
+
+//카테고리 삭제 (카테고리 없음은 삭제 불가, 안에 있던 일정은 카테고리 없음으로 돌려보냄)
+function removeCategory(categoryKey) {
+    if (categoryKey === DEFAULT_CATEGORY) return;
+
+    saveCategories(loadCategories().filter((c) => c !== categoryKey));
+
+    const all = loadAllSchedules();
+    all.forEach((it) => {
+        if ((it.category || DEFAULT_CATEGORY) === categoryKey) it.category = DEFAULT_CATEGORY;
+    });
+    saveAllSchedules(all);
+}
+
+/*1-1. 주간 캘린더용 li 생성*/
 function createScheduleLi(item) {
     const li = document.createElement('li');
     li.dataset.id = item.id;
+    li.draggable = false;
     if (item.completed) li.classList.add('completed');
 
     li.innerHTML = `
@@ -68,88 +192,21 @@ function createScheduleLi(item) {
     return li;
 }
 
-/*1-2.월간 캘린더*/
-const MONTH_STORAGE_KEY = 'monthPlans';
-
-function loadAllPlans() {
-    try {
-        return JSON.parse(localStorage.getItem(MONTH_STORAGE_KEY)) || {};
-    } catch (e) {
-        return {};
-    }
-}
-
-function saveAllPlans(data) {
-    localStorage.setItem(MONTH_STORAGE_KEY, JSON.stringify(data));
-}
-//일정 추가
-function addPlanToStorage(dateKey, item) {
-    const all = loadAllPlans();
-    if (!all[dateKey]) all[dateKey] = [];
-    all[dateKey].push(item);
-    saveAllPlans(all);
-}
-//일정 삭제
-function removePlanFromStorage(dateKey, id) {
-    const all = loadAllPlans();
-    if (!all[dateKey]) return;
-
-    all[dateKey] = all[dateKey].filter((it) => it.id !== id);
-    saveAllPlans(all);
-}
-//일정 데이터로 div 생성
+/*1-2. 월간 캘린더용 일정 div 생성*/
 function createPlanDiv(item) {
     const planDiv = document.createElement('div');
     planDiv.classList.add('plan');
     planDiv.dataset.id = item.id;
-    planDiv.textContent = item.text;
+    const timeText = item.time ? ` [${item.time}]` : '';
+    planDiv.textContent = item.text + timeText;
     return planDiv;
 }
 
-/*전체일정목록(TODO)*/
-const TODO_STORAGE_KEY = 'todoItems';
-
-function loadAllTodoItems() {
-    try {
-        return JSON.parse(localStorage.getItem(TODO_STORAGE_KEY)) || {};
-    } catch (e) {
-        return {};
-    }
-}
-
-function saveAllTodoItems(data) {
-    localStorage.setItem(TODO_STORAGE_KEY, JSON.stringify(data));
-}
-//일정 추가
-function addTodoItem(categoryKey, item) {
-    const all = loadAllTodoItems();
-    if (!all[categoryKey]) all[categoryKey] = [];
-    all[categoryKey].push(item);
-    saveAllTodoItems(all);
-}
-//일정 수정
-function updateTodoItem(categoryKey, id, changes) {
-    const all = loadAllTodoItems();
-    if (!all[categoryKey]) return;
-
-    const item = all[categoryKey].find((it) => it.id === id);
-    if (!item) return;
-
-    Object.assign(item, changes);
-    saveAllTodoItems(all);
-}
-
-function removeTodoItem(categoryKey, id) {
-    const all = loadAllTodoItems();
-    if (!all[categoryKey]) return;
-
-    all[categoryKey] = all[categoryKey].filter((it) => it.id !== id);
-    saveAllTodoItems(all);
-}
-//일정 데이터로 li 생성
+/*1-3. 전체일정목록(TODO)용 li 생성*/
 function createTodoLi(item) {
     const li = document.createElement('li');
     li.dataset.id = item.id;
+    li.draggable = true;
     if (item.completed) li.classList.add('completed');
 
     const dateHtml = item.time ? `<div class="date">${escapeHtml(item.time)}</div>` : '';
@@ -162,10 +219,11 @@ function createTodoLi(item) {
 
     return li;
 }
+
 //카테고리 생성
 function createCategoryArticle(categoryKey) {
     const article = document.createElement('article');
-    article.classList.add('category'); // ★ 이 줄이 빠져서 CSS 적용이 안 됐던 것입니다 ★
+    article.classList.add('category');
     article.dataset.category = categoryKey;
 
     article.innerHTML = `
@@ -176,15 +234,13 @@ function createCategoryArticle(categoryKey) {
                 <button class="menu">⋮</button>
             </div>
              <div class="schedule-edit">
-                <button>카테고리 삭제</button>
-                <button>일정 편집</button>
+                <button data-action="delete-category">카테고리 삭제</button>
+                <button data-action="edit-schedule">일정 편집</button>
              </div>
         </div> 
 
         <div class="category-content">
-            <ul>
-                <li></li>
-            </ul>
+            <ul></ul>
         </div>
         
         <section class="edit-toolbar">
@@ -198,14 +254,6 @@ function createCategoryArticle(categoryKey) {
     `;
 
     return article;
-}
-// 카테고리가 저장소에 없으면 빈 배열로 등록
-function initTodoCategoryStorage(article, categoryKey) {
-    const all = loadAllTodoItems();
-    if (all[categoryKey]) return;
-
-    all[categoryKey] = [];
-    saveAllTodoItems(all);
 }
 
 /*2. 화면 그리기(랜더링)*/
@@ -272,7 +320,12 @@ function renderMonthCalendar() {
             }
 
             td.appendChild(dateSpan);
-            renderPlansForCell(td, cellDateKey);
+
+            const plansWrapper = document.createElement('div');
+            plansWrapper.classList.add('plans-list');
+            td.appendChild(plansWrapper);
+
+            renderPlansForCell(plansWrapper, cellDateKey);
             tr.appendChild(td);
         }
 
@@ -286,12 +339,11 @@ function renderMonthCalendar() {
     }
 }
 // 저장된 일정을 날짜 셀에 렌더링
-function renderPlansForCell(td, dateKey) {
-    td.querySelectorAll('.plan').forEach((el) => el.remove());
+function renderPlansForCell(container, dateKey) {
+    container.querySelectorAll('.plan').forEach((el) => el.remove());
 
-    const items = loadAllPlans()[dateKey] || [];
-    items.forEach((item) => {
-        td.appendChild(createPlanDiv(item));
+    getItemsByDate(dateKey).forEach((item) => {
+        container.appendChild(createPlanDiv(item));
     });
 }
 
@@ -358,15 +410,14 @@ function renderWeekCalendar(baseDate) {
         renderScheduleList(article, dateKey);
     });
 }
-//저장된 일정을 해당 날짜의 목록에 렌더링
+//저장된 일정을 해당 날짜의 목록에 렌더링 (카테고리와 상관없이 그 날짜의 모든 일정 표시)
 function renderScheduleList(article, dateKey) {
     const ul = article.querySelector('.schedule-area ul');
     if (!ul) return;
 
     ul.innerHTML = '';
 
-    const items = loadAllSchedules()[dateKey] || [];
-    items.forEach((item) => {
+    getItemsByDate(dateKey).forEach((item) => {
         ul.appendChild(createScheduleLi(item));
     });
 }
@@ -379,9 +430,52 @@ function renderTodoList(article, categoryKey) {
 
     ul.innerHTML = '';
 
-    const items = loadAllTodoItems()[categoryKey] || [];
-    items.forEach((item) => {
+    getItemsByCategory(categoryKey).forEach((item) => {
         ul.appendChild(createTodoLi(item));
+    });
+}
+//화면에 있는 모든 카테고리 목록 다시 그리기 (드래그로 카테고리 이동했을 때 사용)
+function renderAllTodoCategories() {
+    document.querySelectorAll('.category-list > article.category').forEach((article) => {
+        const categoryKey = article.dataset.category;
+        if (categoryKey) renderTodoList(article, categoryKey);
+    });
+}
+
+//TODO페이지 초기화
+function initTodoPage() {
+    const categoryList = document.querySelector('.category-list');
+    if (!categoryList) return;
+
+    const categoryPlus = categoryList.querySelector('.categoryplus');
+
+    //카테고리 목록 준비
+    let categories = loadCategories();
+
+    categoryList.querySelectorAll(':scope > article').forEach((article) => {
+        if (article.classList.contains('categoryplus')) return;
+
+        const h3 = article.querySelector('.category-header h3');
+        const categoryKey = h3 ? h3.textContent.trim() : null;
+        if (categoryKey && !categories.includes(categoryKey)) categories.push(categoryKey);
+    });
+    saveCategories(categories);
+
+    //카테고리 순서대로 article을 찾거나 새로 만들어서 렌더링
+    categories.forEach((categoryKey) => {
+        let article = Array.from(categoryList.querySelectorAll(':scope > article')).find((a) => {
+            if (a.classList.contains('categoryplus')) return false;
+            const h3 = a.querySelector('.category-header h3');
+            return h3 && h3.textContent.trim() === categoryKey;
+        });
+
+        if (!article) {
+            article = createCategoryArticle(categoryKey);
+            categoryList.insertBefore(article, categoryPlus);
+        }
+
+        article.dataset.category = categoryKey;
+        renderTodoList(article, categoryKey);
     });
 }
 
@@ -456,9 +550,8 @@ document.addEventListener('DOMContentLoaded', () => {
             //일정 삭제
             if (e.target.closest('.delete-schedule button')) {
                 const li = e.target.closest('li');
-                const article = e.target.closest('article');
-                if (li && article) {
-                    removeSchedule(article.dataset.date, li.dataset.id);
+                if (li) {
+                    removeScheduleItem(li.dataset.id);
                     li.remove();
                 }
                 return;
@@ -480,7 +573,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const completed = e.target.checked;
             li.classList.toggle('completed', completed);
-            upsertSchedule(article.dataset.date, li.dataset.id, { completed });
+            upsertScheduleItem(li.dataset.id,
+                { date: article.dataset.date, text: '', time: '', completed: false, category: DEFAULT_CATEGORY },
+                { completed }
+            );
         });
         //텍스트 입력을 끝냈을 때 빈칸이면 삭제, 텍스트가 있으면 저장
         weekCalendar.addEventListener('focusout', function (e) {
@@ -494,12 +590,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = e.target.textContent.trim();
 
             if (text === '') {
-                removeSchedule(dateKey, li.dataset.id);
+                removeScheduleItem(li.dataset.id);
                 li.remove();
                 return;
             }
 
-            upsertSchedule(dateKey, li.dataset.id, { text });
+            upsertScheduleItem(li.dataset.id,
+                { date: dateKey, text: '', time: '', completed: false, category: DEFAULT_CATEGORY },
+                { text }
+            );
+
+            //같은 날짜인 다른 페이지(월간 캘린더)에도 자동 반영되도록 갱신
+            renderMonthCalendar();
         });
     }
 
@@ -536,10 +638,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const confirmDelete = confirm(`'${plan.textContent}' 일정을 삭제하시겠습니까?`);
                 if (confirmDelete) {
-                    const td = plan.closest('td');
-                    if (td) {
-                        removePlanFromStorage(td.dataset.date, plan.dataset.id);
-                    }
+                    removeScheduleItem(plan.dataset.id);
                     plan.remove();
                 }
             }
@@ -572,25 +671,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (saveBtn) {
-            //일정 저장
+            //일정 저장 (카테고리 없음으로 저장 -> 전체일정목록에도 자동으로 뜸)
             saveBtn.addEventListener('click', () => {
                 const titleText = titleInput ? titleInput.value.trim() : '';
-                //2개 이상이면 저장x
-                if (selectedTd) {
-                    const currentPlans = selectedTd.querySelectorAll('.plan');
-                    if (currentPlans.length >= 2) {
-                        alert('일정을 등록할 수 없습니다.');
-                        closeModal();
-                        return;
-                    }
-                    //시간 입력 시 대괄호로 표시
-                    const timeText = timeInput && timeInput.value ? ` [${timeInput.value}]` : '';
+                if (selectedTd && titleText !== '') {
                     const dateKey = selectedTd.dataset.date;
-                    const id = `p${Date.now()}${Math.random().toString(16).slice(2)}`;
-                    const item = { id, text: titleText + timeText };
+                    const timeValue = timeInput ? timeInput.value : '';
 
-                    addPlanToStorage(dateKey, item);
-                    selectedTd.appendChild(createPlanDiv(item));
+                    const item = addScheduleItem({
+                        date: dateKey,
+                        text: titleText,
+                        time: timeValue,
+                        completed: false,
+                        category: DEFAULT_CATEGORY
+                    });
+
+                    let plansWrapper = selectedTd.querySelector('.plans-list');
+                    if (!plansWrapper) {
+                        plansWrapper = document.createElement('div');
+                        plansWrapper.classList.add('plans-list');
+                        selectedTd.appendChild(plansWrapper);
+                    }
+                    plansWrapper.appendChild(createPlanDiv(item));
+
+                    //같은 날짜인 다른 페이지(주간 캘린더)에도 자동 반영되도록 갱신
+                    renderWeekCalendar(currentWeekDate);
                 }
 
                 closeModal();
@@ -638,11 +743,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const time = timeInput ? timeInput.value : '';
-                const id = `t${Date.now()}${Math.random().toString(16).slice(2)}`;
-                const item = { id, text, time, completed: false };
-
                 const categoryKey = selectedCategoryArticle.dataset.category;
-                addTodoItem(categoryKey, item);
+
+                const item = addScheduleItem({
+                    date: null,
+                    text,
+                    time,
+                    completed: false,
+                    category: categoryKey
+                });
 
                 const ul = selectedCategoryArticle.querySelector('.category-content ul');
                 if (ul) ul.appendChild(createTodoLi(item));
@@ -655,22 +764,19 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!e.target.matches('.category-content input[type="checkbox"]')) return;
 
             const li = e.target.closest('li');
-            const article = e.target.closest('article');
-            if (!li || !article) return;
+            if (!li) return;
 
             const completed = e.target.checked;
             li.classList.toggle('completed', completed);
-            updateTodoItem(article.dataset.category, li.dataset.id, { completed });
+            updateScheduleItem(li.dataset.id, { completed });
         });
-    }
 
-    const deleteModal = document.querySelector('.categorydelete-modal');
-    const btnYes = deleteModal ? deleteModal.querySelector('.yes') : null;
-    const btnNo = deleteModal ? deleteModal.querySelector('.no') : null;
+        const deleteModal = document.querySelector('.categorydelete-modal');
+        const btnYes = deleteModal ? deleteModal.querySelector('.yes') : null;
+        const btnNo = deleteModal ? deleteModal.querySelector('.no') : null;
 
-    let targetCategoryArticle = null;
+        let targetCategoryArticle = null;
 
-    if (categoryList) {
         categoryList.addEventListener('click', (e) => {
             //더보기 버튼
             const menuBtn = e.target.closest('.menu');
@@ -687,13 +793,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            //카테고리 삭제 버튼
+            //카테고리 삭제 버튼 (카테고리 없음은 삭제 불가)
             const deleteCategoryBtn = e.target.closest('.schedule-edit button:nth-child(1)');
             if (deleteCategoryBtn) {
-                targetCategoryArticle = deleteCategoryBtn.closest('article');
+                const article = deleteCategoryBtn.closest('article');
                 const menuBox = deleteCategoryBtn.closest('.schedule-edit');
                 if (menuBox) menuBox.classList.remove('active');
 
+                if (article && article.dataset.category === DEFAULT_CATEGORY) {
+                    alert(`'${DEFAULT_CATEGORY}' 카테고리는 삭제할 수 없습니다.`);
+                    return;
+                }
+
+                targetCategoryArticle = article;
                 if (deleteModal) deleteModal.style.display = 'flex';
                 return;
             }
@@ -730,15 +842,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const deleteToolbarBtn = e.target.closest('.edit-toolbar .delete-button');
             if (deleteToolbarBtn) {
                 const article = deleteToolbarBtn.closest('article');
-                const categoryKey = article ? article.dataset.category : null;
                 const toolbar = article ? article.querySelector('.edit-toolbar') : null;
                 const selectedItems = article ? article.querySelectorAll('.category-content li.selected') : [];
 
                 selectedItems.forEach((li) => {
                     const id = li.dataset.id;
-                    if (id && categoryKey) {
-                        removeTodoItem(categoryKey, id);
-                    }
+                    if (id) removeScheduleItem(id);
                     li.remove();
                 });
 
@@ -762,6 +871,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (toolbar) toolbar.classList.remove('active');
             }
         });
+
+        //카테고리 간 일정 드래그 이동
+        categoryList.addEventListener('dragstart', (e) => {
+            const li = e.target.closest('.category-content li');
+            if (!li || !li.dataset.id) return;
+            e.dataTransfer.setData('text/plain', li.dataset.id);
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        categoryList.addEventListener('dragover', (e) => {
+            const content = e.target.closest('.category-content');
+            if (!content) return;
+            e.preventDefault();
+            content.classList.add('drag-over');
+        });
+
+        categoryList.addEventListener('dragleave', (e) => {
+            const content = e.target.closest('.category-content');
+            if (content) content.classList.remove('drag-over');
+        });
+
+        categoryList.addEventListener('drop', (e) => {
+            const content = e.target.closest('.category-content');
+            if (!content) return;
+            e.preventDefault();
+            content.classList.remove('drag-over');
+
+            const id = e.dataTransfer.getData('text/plain');
+            const article = content.closest('article');
+            const targetCategory = article ? article.dataset.category : null;
+            if (!id || !targetCategory) return;
+
+            updateScheduleItem(id, { category: targetCategory });
+            renderAllTodoCategories();
+        });
+
+        // 카테고리 삭제 팝업
+        if (deleteModal) {
+            if (btnYes) {
+                btnYes.addEventListener('click', () => {
+                    if (targetCategoryArticle) {
+                        const categoryKey = targetCategoryArticle.dataset.category;
+                        if (categoryKey) removeCategory(categoryKey);
+
+                        targetCategoryArticle.remove();
+                        targetCategoryArticle = null;
+
+                        //해당 카테고리에 있던 일정들이 카테고리 없음으로 돌아왔으니 다시 그림
+                        renderAllTodoCategories();
+                    }
+                    deleteModal.style.display = 'none';
+                });
+            }
+
+            if (btnNo) {
+                btnNo.addEventListener('click', () => {
+                    targetCategoryArticle = null;
+                    deleteModal.style.display = 'none';
+                });
+            }
+        }
     }
 
     //카테고리 추가 팝업
@@ -801,8 +971,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
                     //새 카테고리 저장
-                    allTodo[categoryName] = [];
-                    saveAllTodoItems(allTodo);
+                    addCategory(categoryName);
 
                     const categoryPlus = categoryList ? categoryList.querySelector('.categoryplus') : null;
 
@@ -814,34 +983,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     closeCategoryModal();
                 }
-            });
-        }
-    }
-
-    // 카테고리 삭제 팝업
-    if (deleteModal) {
-        if (btnYes) {
-            btnYes.addEventListener('click', () => {
-                if (targetCategoryArticle) {
-                    const categoryKey = targetCategoryArticle.dataset.category;
-
-                    if (categoryKey) {
-                        const allTodo = loadAllTodoItems();
-                        delete allTodo[categoryKey];
-                        saveAllTodoItems(allTodo);
-                    }
-
-                    targetCategoryArticle.remove();
-                    targetCategoryArticle = null;
-                }
-                deleteModal.style.display = 'none';
-            });
-        }
-
-        if (btnNo) {
-            btnNo.addEventListener('click', () => {
-                targetCategoryArticle = null;
-                deleteModal.style.display = 'none';
             });
         }
     }
@@ -864,35 +1005,6 @@ function addNewSchedule(scheduleArea) {
         if (e.key === 'Enter') {
             e.preventDefault();
             span.blur();
-        }
-    });
-}
-//TODO페이지 초기화
-function initTodoPage() {
-    const categoryList = document.querySelector('.category-list');
-    if (!categoryList) return;
-
-    const categoryPlus = categoryList.querySelector('.categoryplus');
-    const allTodo = loadAllTodoItems();
-
-    categoryList.querySelectorAll(':scope > article').forEach((article) => {
-        if (article.classList.contains('categoryplus')) return;
-
-        const h3 = article.querySelector('.category-header h3');
-        const categoryKey = h3 ? h3.textContent.trim() : null;
-        if (!categoryKey) return;
-
-        article.dataset.category = categoryKey;
-        initTodoCategoryStorage(article, categoryKey);
-        renderTodoList(article, categoryKey);
-    });
-
-    Object.keys(allTodo).forEach((categoryKey) => {
-        const exists = categoryList.querySelector(`article[data-category="${categoryKey}"]`);
-        if (!exists && categoryPlus) {
-            const newArticle = createCategoryArticle(categoryKey);
-            categoryList.insertBefore(newArticle, categoryPlus);
-            renderTodoList(newArticle, categoryKey);
         }
     });
 }

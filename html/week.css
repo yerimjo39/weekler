@@ -5,7 +5,7 @@
 
     display: flex;
     align-items: center;
-    margin-left: 45%;
+    margin-left: 37%;
     margin-top: -50px;
 
     gap: 40px;
@@ -56,7 +56,7 @@
 /*오늘 날짜 강조*/
 
 #calendar article.today > div:first-child {
-    background-color: #f2f2f2;
+    background-color: #b8e9ff;
 }
 
 #calendar article.today > div:first-child h3 {

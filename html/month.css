@@ -159,6 +159,24 @@ td.today .date {
     border-radius: 50%;
 }
 
+/* 일정 목록 영역 (날짜 아래, 칸 크기는 고정하고 넘치면 스크롤) */
+.plans-list {
+    max-height: 60px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    scrollbar-width: thin;
+}
+
+.plans-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.plans-list::-webkit-scrollbar-thumb {
+    background-color: #b8e9ff;
+    border-radius: 2px;
+}
+
 /* 일정 표시 영역 */
 .plan {
     box-sizing: border-box;
